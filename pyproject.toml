@@ -1,0 +1,43 @@
+[project]
+name = "chronos"
+version = "0.1.0"
+description = "Хронос — личный трекер графика и времени с аналитикой для Telegram"
+requires-python = ">=3.11"
+dependencies = [
+    "aiogram>=3.15,<4",
+    "sqlalchemy[asyncio]>=2.0,<3",
+    "alembic>=1.13",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "apscheduler>=3.10,<4",
+    "loguru>=0.7",
+    "aiosqlite>=0.20",
+]
+
+[project.optional-dependencies]
+charts = ["matplotlib>=3.9"]
+# Переход на PostgreSQL: asyncpg — для приложения, psycopg — для Alembic.
+postgres = ["asyncpg>=0.29", "psycopg[binary]>=3.1"]
+dev = ["pytest>=8.2", "pytest-asyncio>=0.23", "ruff>=0.6"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
+asyncio_mode = "auto"
+filterwarnings = ["error::DeprecationWarning:chronos.*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4"]
+ignore = ["E501"]

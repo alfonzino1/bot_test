@@ -1,0 +1,54 @@
+# Хронос: unit для systemd (Linux/VPS).
+#
+# Установка:
+#   sudo cp deploy/chronos.service /etc/systemd/system/chronos.service
+#   sudo nano /etc/systemd/system/chronos.service      # поправь User и WorkingDirectory
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now chronos
+#   sudo systemctl status chronos
+#   journalctl -u chronos -f                            # живые логи
+#
+# Перед первым запуском (от имени сервисного пользователя):
+#   cd /opt/chronos && .venv/bin/python -m alembic upgrade head
+# или просто доверь это ExecStartPre ниже — он применит миграции сам.
+
+[Unit]
+Description=Хронос — Telegram-бот трекера графика и времени
+Documentation=file:///opt/chronos/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=chronos
+Group=chronos
+WorkingDirectory=/opt/chronos
+
+# Приложение само читает /opt/chronos/.env (pydantic-settings), поэтому
+# EnvironmentFile здесь не нужен: секреты не попадают в конфиг systemd.
+Environment=PYTHONPATH=/opt/chronos/src
+Environment=PYTHONUNBUFFERED=1
+
+# Миграции применяются до старта — идемпотентно, повторный запуск безопасен.
+ExecStartPre=/opt/chronos/.venv/bin/python -m alembic upgrade head
+ExecStart=/opt/chronos/.venv/bin/python -m chronos
+
+# Long polling: входящие порты не нужны, только исходящий доступ к api.telegram.org.
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=20
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=chronos
+
+# Изоляция: процессу нужна запись только в data/ (SQLite + логи).
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/opt/chronos/data
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,31 @@
+# Секреты и локальные настройки
+.env
+
+# Виртуальные окружения и каталоги зависимостей
+.venv/
+venv/
+libs/
+.deps/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.pytest-data/
+.ruff_cache/
+pytest-tmp*/
+
+# Данные приложения
+data/
+!data/.gitkeep
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+reports/
+*.png
+
+# Системное
+.DS_Store
+Thumbs.db

@@ -1,0 +1,21 @@
+# Продовые зависимости (пин минимальных версий).
+aiogram>=3.15,<4
+SQLAlchemy[asyncio]>=2.0,<3
+alembic>=1.13
+pydantic>=2.7
+pydantic-settings>=2.3
+APScheduler>=3.10,<4
+loguru>=0.7
+aiosqlite>=0.20
+
+# Графики отчётов (этап 3). Без него бот работает, отчёт отдаётся текстом.
+matplotlib>=3.9
+
+# Переход на PostgreSQL (ТЗ, раздел 6): asyncpg — драйвер приложения,
+# psycopg — драйвер Alembic. Нужны только если уходишь с SQLite.
+# asyncpg>=0.29
+# psycopg[binary]>=3.1
+
+# Разработка
+pytest>=8.2
+pytest-asyncio>=0.23
